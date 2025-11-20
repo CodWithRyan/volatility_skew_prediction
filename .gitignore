@@ -1,0 +1,23 @@
+# Python
+__pycache__/
+*.py[cod]
+# Env
+.vsp_env/
+.venv/
+venv/
+env/
+# Jupyter
+.ipynb_checkpoints/
+# Build / packaging
+*.egg-info/
+dist/
+build/
+# OS
+.DS_Store
+Thumbs.db
+# Project outputs
+notebooks/outputs/*
+!notebooks/outputs/*.png
+!notebooks/outputs/*.jpg
+!notebooks/outputs/*.pdf
+!notebooks/outputs/.gitkeep

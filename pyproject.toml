@@ -1,0 +1,25 @@
+[build-system]
+
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+
+name = "volatility_skew_prediction"
+version = "0.1.0"
+description = "A quantitative trading strategy that predicts future market direction using options volatility skew"
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = [
+"pandas>=2.0",
+"numpy>=1.24",
+"matplotlib>=3.7",
+"seaborn>=0.12",
+"yfinance>=0.2.32",
+"tabulate>=0.9.0",
+"mibian>=0.1.3"
+]
+
+[tool.setuptools.packages.find]
+
+where = ["src"]
