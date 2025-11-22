@@ -3,150 +3,104 @@
 ## 📊 Overview
 A quantitative trading strategy that predicts future market direction using options volatility skew. The strategy analyzes the difference between OTM put and call implied volatilities to generate trading signals.
 
-## 🎯 Project Objectives
-- Calculate ATM and OTM strike prices from futures data
-- Compute implied volatility for various strike prices
-- Calculate volatility skew metric
-- Develop and backtest a directional trading strategy
-- Analyze performance with risk metrics (Sharpe ratio, max drawdown)
+## 🎯 Overview
 
+This project implements a systematic trading strategy based on implied volatility skew patterns in S&P 500 options. The strategy identifies mispricing opportunities by analyzing the relationship between put and call option volatilities across different strike prices.
+
+**Key Result:** Sharpe Ratio of **3.47** with minimal drawdown (-1.68%)
+
+## 📁 Project Structure
+
+volatility_skew_prediction/
+├── src/
+│   └── volatility_skew_prediction/
+│       ├── data_loader.py          # Data ingestion & preprocessing
+│       ├── iv_calculator.py        # Implied volatility calculations
+│       ├── skew_calculator.py      # Skew metrics computation
+│       ├── strategy.py             # Trading signal generation
+│       └── perf_metrics.py         # Performance analytics
+├── notebooks/
+│   ├── 01_data_collection.ipynb    # Data exploration
+│   └── outputs/                     # Generated charts & results
+├── data/
+│   └── skew_data.csv               # Historical options data
+└── requirements.txt
+
+
+## 🚀 Quick Start
+
+### Installation
+
+```bash
+# Clone repository
+git clone https://github.com/CodWithRyan/volatility_skew_prediction.git
+cd volatility_skew_prediction
+
+# Create virtual environment
+python -m venv .vsp_env
+source .vsp_env/bin/activate  
+
+# Install dependencies
+pip install -r requirements.txt
+```
 ## 🔍 Strategy Logic
 The volatility skew is calculated as:
 ```
 Volatility Skew = (OTM Put IV - OTM Call IV) / ATM IV
 ```
 
-**Trading Signals:**
-- **Long Signal**: When skew < -0.05 (calls more expensive than puts → bullish sentiment)
-- **Short Signal**: When skew > 0.1 (puts more expensive than calls → bearish sentiment)
+📈 Performance Metrics
 
-## 📦 Installation
+Metric              Value
 
-### Prerequisites
-- Python 3.8+
-- pip
+Strategy Return     2.70%
 
-### Setup
-```bash
-# Clone the repository
-git clone https://github.com/codwithryan/volatility-skew-prediction.git
-cd volatility-skew-prediction
+Market Return       11.29%
 
-# Create virtual environment
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
+Sharpe Ratio        3.47
 
-# Install dependencies
-pip install -r requirements.txt
-```
+Max Drawdown        -1.68%
 
-## 📊 Data Sources
+Number of Trades        15
 
-This project uses options and futures data from the following free sources:
-
-### Recommended Free Data Sources:
-1. **Yahoo Finance** (via yfinance)
-   - SPY, QQQ options (US markets)
-   - Limited historical depth but reliable
-
-2. **CBOE DataShop**
-   - Free delayed data
-   - SPX options data
-   - URL: http://www.cboe.com/delayedquote/quote-table
-
-3. **Alpha Vantage**
-   - Free API (500 calls/day)
-   - Options data for US stocks
-   - URL: https://www.alphavantage.co/
-
-4. **Polygon.io**
-   - Free tier available
-   - Options and futures data
-   - URL: https://polygon.io/
-
-5. **Interactive Brokers (IBKR)**
-   - Free paper trading account
-   - Real-time data access via API
-   - Requires ib_insync library
-
-See `data/DATA_SOURCES.md` for detailed instructions on data collection.
-
-## 🚀 Usage
-
-### Quick Start
-```python
-from src.data_loader import load_options_data
-from src.strategy import VolatilitySkewStrategy
-
-# Load data
-options_data, futures_data = load_options_data('SPY', '2023-01-01', '2023-12-31')
-
-# Initialize strategy
-strategy = VolatilitySkewStrategy(
-    strike_difference=5,
-    long_threshold=-0.05,
-    short_threshold=0.1
-)
+Transaction Costs       0.032% per trade
 
 
+## 🔑 Key Features
 
-## 📈 Results
+- Low Frequency: ~15 trades over test period
+- Risk-Adjusted Excellence: Sharpe > 3 indicates consistent risk-adjusted returns
+- Minimal Drawdown: -1.68% maximum loss
+- Transaction Cost Aware: Realistic slippage & commission modeling
 
-### Backtest Performance (Example)
-- **Period**: 2023-01-01 to 2023-12-31
-- **Sharpe Ratio**: 1.42
-- **Max Drawdown**: -8.5%
-- **Total Return**: 23.4%
-- **Win Rate**: 58%
+## 📊 Strategy Logic
 
-*Note: Results will vary based on the underlying asset and time period.*
+- Calculate Implied Volatility using Black-Scholes model
+- Compute Skew Metrics (25-delta put/call spread)
+- Generate Signals when skew exceeds statistical thresholds
+- Execute Trades with proper risk management
+- Apply Realistic Costs (commission + slippage)
 
-## 🛠️ Project Structure
-```
-├── notebooks/          # Jupyter notebooks for analysis
-├── src/               # Source code modules
-├── data/              # Data storage (raw and processed)
-├── results/           # Output figures and metrics
-├── tests/             # Unit tests
-└── config/            # Configuration files
-```
+## ⚙️ Configuration
+Key parameters in strategy.py:
 
-## 📚 Key Modules
+SKEW_THRESHOLD = 2.0      # Standard deviations for signal
+DTE_MIN = 7               # Minimum days to expiration
+DTE_MAX = 30              # Maximum days to expiration
+COMMISSION =  $ 1.50        # Per contract
+SLIPPAGE =  $ 0.10          # Bid-ask spread assumption
 
-- **data_loader.py**: Functions to fetch and clean options/futures data
-- **iv_calculator.py**: Implied volatility calculations using Black-Scholes
-- **skew_calculator.py**: Volatility skew computation
-- **strategy.py**: Trading strategy logic and signal generation
-- **performance_metrics.py**: Sharpe ratio, max drawdown, etc.
+## 📝 Requirements
 
-## 🔬 Methodology
+Python 3.8+
+pandas, numpy, scipy
+matplotlib, seaborn
+jupyter (for notebooks)
 
-1. **Data Collection**: Fetch options and futures data
-2. **Strike Selection**: Calculate ATM, OTM call, and OTM put strikes
-3. **IV Calculation**: Use Black-Scholes model to compute implied volatility
-4. **Skew Computation**: Calculate normalized volatility skew
-5. **Signal Generation**: Generate long/short signals based on thresholds
-6. **Backtesting**: Simulate strategy performance with realistic assumptions
-7. **Performance Analysis**: Calculate risk-adjusted metrics
+See requirements.txt for complete list
 
-
-## 📊 Performance Metrics
-
-The strategy evaluates:
-- **Sharpe Ratio**: Risk-adjusted returns
-- **Maximum Drawdown**: Worst peak-to-trough decline
-- **Win Rate**: Percentage of profitable trades
-- **Profit Factor**: Gross profits / Gross losses
-- **Sortino Ratio**: Downside risk-adjusted returns
-
-## 🤝 Contributing
-
-Contributions are welcome! Please:
-1. Fork the repository
-2. Create a feature branch
-3. Commit your changes
-4. Push to the branch
-5. Open a Pull Request
+## ⚠️ Disclaimer
+This project is for educational and research purposes only. Past performance does not guarantee future results. Options trading involves substantial risk of loss. Always conduct thorough due diligence and consider consulting a financial advisor before implementing any trading strategy.
 
 
 ## 👤 Author
@@ -155,14 +109,6 @@ Contributions are welcome! Please:
 
 ## 🙏 Acknowledgments
 
-- Black-Scholes model implementation using `mibian` library
-- Inspired by options trading research and volatility smile analysis
+Inspired by options trading research and volatility smile analysis
 
-## ⚠️ Disclaimer
 
-This project is for educational purposes only. It does not constitute financial advice. Trading options involves significant risk and may not be suitable for all investors. Always do your own research and consult with a financial advisor before making investment decisions.
-
-## 📖 References
-
-- [CBOE Volatility Index Methodology](http://www.cboe.com/vix)
-- [Black-Scholes Model](https://en.wikipedia.org/wiki/Black%E2%80%93Scholes_model)
